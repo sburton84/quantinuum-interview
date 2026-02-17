@@ -4,6 +4,7 @@
 const nextConfig = {
     output: 'export',
     images: { unoptimized: true },
+    transpilePackages: ['@quantinuum/quantinuum-ui'],
     // Optional: Change links `/me` -> `/me/` and emit `/me.html` -> `/me/index.html`
     trailingSlash: true,
    

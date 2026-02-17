@@ -20,7 +20,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@cqcl/quantinuum-ui": ["node_modules/@quantinuum/quantinuum-ui"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
