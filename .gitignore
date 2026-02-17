@@ -34,3 +34,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# docs
+/sphinx
+/public/tket
+/public/guppy
+
+# IDE
+/.idea

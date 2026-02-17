@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cqcl/quantinuum-ui": "^1.26.5",
     "@next/third-parties": "15.0.3",
     "@quantinuum/quantinuum-ui": "^2.6.0",
     "lucide-react": "^0.539.0",

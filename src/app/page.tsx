@@ -31,7 +31,7 @@ const productsConfig = [
   }], logo:  <GuppyLogo className="h-12 w-36"></GuppyLogo>, }, 
   {name: "TKET",link:"tket", logo:<TKETLogo className="h-8 w-32" ></TKETLogo>,  description: `Quantum computing toolkit and optimizing compiler.`, links: [{
     title: 'Get Started with TKET',
-    link: '/tket/user-guide/',
+    link: '/tket/user-guide/index.html',
     subtitle: "Getting started tutorial showing basic usage of pytket."
   },
   {
