@@ -69,7 +69,7 @@ export default function Home() {
   return (
     <>
       <DocsNavBar activePath="/">
-        <SearchBar placeholder="Search..." />
+        <SearchBar />
       </DocsNavBar>
       <DocsPageLayout>
         <DocsHeaderWrapper>

@@ -22,6 +22,7 @@ const screens = {
 export default {
   content: [
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
     path.join(
       path.dirname(require.resolve("@quantinuum/quantinuum-ui")),
       "**/*.{js,ts,jsx,tsx,mdx}",

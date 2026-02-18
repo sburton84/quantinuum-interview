@@ -2,24 +2,31 @@
 
 import { SearchIcon } from "lucide-react";
 
-export default function SearchBar({ placeholder }: { placeholder: string }) {
+export default function SearchBar({ placeholder = "Search documentation…" }: { placeholder?: string }) {
     function handleSearch(term: string) {
         console.log(term);
     }
 
     return (
-        <div className="relative flex flex-1 shrink-0">
+        <div className="relative flex flex-1 shrink-0 max-w-xl">
             <label htmlFor="search" className="sr-only">
-                Search
+                Search documentation
             </label>
-            <input
-                className="w-full rounded-xl border shadow"
-                placeholder="Search..."
-                onChange={(e) => {
-                    handleSearch(e.target.value);
-                }}
+            <SearchIcon
+                size={16}
+                className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+                aria-hidden
             />
-            <SearchIcon className="w-6 h-6 mb-3 inline" aria-label="search icon" />
+            <input
+                id="search"
+                type="search"
+                role="searchbox"
+                autoComplete="off"
+                placeholder={placeholder}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="w-full h-8 rounded-md border border-input bg-background py-2 pl-8 pr-4 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background hover:border-input/80 disabled:cursor-not-allowed disabled:opacity-50"
+            />
+
         </div>
     );
 }
