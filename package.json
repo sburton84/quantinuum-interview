@@ -25,9 +25,6 @@
     "turbopack": "^0.0.1",
     "zod": "^3.23.8"
   },
-  "overrides": {
-    "package-name": "file:../quantinuum-ui#main"
-  },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
