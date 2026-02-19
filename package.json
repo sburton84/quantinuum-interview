@@ -4,7 +4,8 @@
   "private": true,
   "pnpm": {
     "onlyBuiltDependencies": [
-      "@quantinuum/quantinuum-ui"
+      "@quantinuum/quantinuum-ui",
+      "better-sqlite3"
     ]
   },
   "scripts": {
@@ -15,7 +16,8 @@
   },
   "dependencies": {
     "@next/third-parties": "15.0.3",
-    "@quantinuum/quantinuum-ui": "^3",
+    "@quantinuum/quantinuum-ui": "github:sburton84/quantinuum-ui",
+    "better-sqlite3": "^12",
     "lucide-react": "^0.539.0",
     "next": "^14.2.0",
     "react": "^18",
@@ -23,12 +25,14 @@
     "react-icons": "^5.0.1",
     "shiki": "^3.9.2",
     "turbopack": "^0.0.1",
+    "use-debounce": "^10.1.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/better-sqlite3": "^7.6.11",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

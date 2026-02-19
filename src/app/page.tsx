@@ -17,6 +17,7 @@ import { QLogo } from "./Q";
 import { TKETLogo } from "./TKETLogo";
 import { GuppyLogo } from "./GuppyLogo";
 import SearchBar from "@/components/search-bar";
+import SearchResultsTable from "@/components/search-results-table";
 
 
 const productsConfig = [
@@ -70,7 +71,9 @@ export default function Home() {
     <>
       <DocsNavBar activePath="/">
         <SearchBar />
+        <SearchResultsTable />
       </DocsNavBar>
+
       <DocsPageLayout>
         <DocsHeaderWrapper>
           <DocsHeaderLeft>
