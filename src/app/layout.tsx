@@ -4,6 +4,7 @@ import { Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import "@quantinuum/quantinuum-ui/tokens.css";
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -39,10 +40,8 @@ export default function RootLayout({
         ></link>
         <link rel="icon" type="image/svg+xml" href="quantinuum_favicon.svg" />
       </head>
-      <body
-        className={`${inter.variable} bg-background dark:bg-[#101010] overflow-x-hidden font-sans antialiased ${jetBrains.variable} `}
-      >
-        {children}
+      <body className={`${inter.variable} bg-background dark:bg-[#101010] overflow-x-hidden font-sans antialiased ${jetBrains.variable} `}>
+        <Providers>{children}</Providers>
       </body>
       <GoogleAnalytics gaId={GA_ID} />
     </html>

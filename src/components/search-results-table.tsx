@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 type SearchResultHit = { title: string; url: string; site: string; context?: string | null };
 
@@ -34,46 +34,27 @@ function highlightMatches(text: string, query: string): React.ReactNode {
   );
 }
 
+async function fetchSearchResults(q: string): Promise<SearchResultHit[]> {
+  const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+  if (!res.ok) throw new Error("Search failed");
+  const data: { results: SearchResultHit[] } = await res.json();
+  return data.results ?? [];
+}
+
 /**
- * Client component: displays search results from the server API only.
+ * Client component: displays search results from the server API via React Query.
  */
 export default function SearchResultsTable() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q")?.trim() ?? "";
 
-  const [hits, setHits] = useState<SearchResultHit[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { data: hits = [], isLoading: loading, isError, error } = useQuery({
+    queryKey: ["search", query],
+    queryFn: () => fetchSearchResults(query),
+    enabled: query.length > 0,
+  });
 
-  useEffect(() => {
-    if (!query) {
-      setHits([]);
-      setError(null);
-      return;
-    }
-
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    fetch(`/api/search?q=${encodeURIComponent(query)}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Search failed");
-        return res.json();
-      })
-      .then((data: { results: SearchResultHit[] }) => {
-        if (!cancelled) setHits(data.results ?? []);
-      })
-      .catch((e) => {
-        if (!cancelled) setError(e instanceof Error ? e.message : "Search failed");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [query]);
+  const errorMessage = isError ? (error instanceof Error ? error.message : "Search failed") : null;
 
   if (!query) return null;
 
@@ -97,10 +78,10 @@ export default function SearchResultsTable() {
               </tr>
             </thead>
             <tbody>
-              {error ? (
+              {errorMessage ? (
                 <tr>
                   <td colSpan={2} className="px-4 py-6 text-center text-muted-foreground">
-                    {error}
+                    {errorMessage}
                   </td>
                 </tr>
               ) : loading ? (

@@ -17,6 +17,7 @@
   "dependencies": {
     "@next/third-parties": "15.0.3",
     "@quantinuum/quantinuum-ui": "github:sburton84/quantinuum-ui",
+    "@tanstack/react-query": "^5.90.21",
     "better-sqlite3": "^12",
     "lucide-react": "^0.539.0",
     "next": "^14.2.0",
