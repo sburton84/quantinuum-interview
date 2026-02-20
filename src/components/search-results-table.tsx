@@ -1,21 +1,25 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 
-type SearchResultHit = { title: string; url: string; site: string; context?: string | null };
+export type SearchResultHit = {
+  title: string;
+  url: string;
+  site: string;
+  context?: string | null;
+};
 
-/** Remove newlines from context text. */
+// Remove newlines from context text.
 function normalizeContext(text: string): string {
   return text.replace(/\r?\n/g, " ").replace(/\s+/g, " ").replace(/\\n/g, " ").trim();
 }
 
-/** Escape special regex characters in a string for use in RegExp. */
+// Escape special regex characters in a string for use in RegExp.
 function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-/** Split text by query (case-insensitive) and return React nodes with matches bolded. */
+// Split text by query (case-insensitive) and return React nodes with matches bolded.
 function highlightMatches(text: string, query: string): React.ReactNode {
   if (!query.trim()) {
     return text;
@@ -34,28 +38,55 @@ function highlightMatches(text: string, query: string): React.ReactNode {
   );
 }
 
-async function fetchSearchResults(q: string): Promise<SearchResultHit[]> {
-  const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
-  if (!res.ok) throw new Error("Search failed");
-  const data: { results: SearchResultHit[] } = await res.json();
-  return data.results ?? [];
-}
+type SearchResultsTableProps = {
+  query: string;
+  hits: SearchResultHit[];
+  loading: boolean;
+  error: string | null;
+  activeIndex: number;
+  resultsId: string;
+};
 
-/**
- * Client component: displays search results from the server API via React Query.
- */
-export default function SearchResultsTable() {
-  const searchParams = useSearchParams();
-  const query = searchParams.get("q")?.trim() ?? "";
+// Displays search results with listbox semantics and keyboard support.
+// Receives all data and state from parent SearchBar (arrow keys, Enter, Escape handled there).
+export default function SearchResultsTable({
+  query,
+  hits,
+  loading,
+  error,
+  activeIndex,
+  resultsId,
+}: SearchResultsTableProps) {
+  const listboxRef = useRef<HTMLDivElement>(null);
 
-  const { data: hits = [], isLoading: loading, isError, error } = useQuery({
-    queryKey: ["search", query],
-    queryFn: () => fetchSearchResults(query),
-    enabled: query.length > 0,
-  });
+  useEffect(() => {
+    if (activeIndex < 0 || !listboxRef.current) {
+      return;
+    }
 
-  const errorMessage = isError ? (error instanceof Error ? error.message : "Search failed") : null;
+    // Get the elements for the selected option and the header
+    const listbox = listboxRef.current;
+    const option = listbox.querySelector(
+      `[id="${resultsId}-option-${activeIndex}"]`
+    ) as HTMLElement | null;
+    const thead = listbox.querySelector("thead");
+    if (!option || !thead) {
+      return;
+    }
 
+    // Scroll the selected option into view
+    option.scrollIntoView({ block: "nearest", behavior: "instant" });
+
+    const headerHeight = thead.getBoundingClientRect().height;
+    const optionTop = option.offsetTop;
+
+    // If the selected option is behind the header, scroll the listbox further to ensure it is visible
+    if (optionTop - listbox.scrollTop < headerHeight) {
+      listbox.scrollTop = optionTop - headerHeight;
+    }
+  }, [activeIndex, resultsId]);
+
+  // If there's no query, don't render the table
   if (!query) return null;
 
   return (
@@ -65,9 +96,15 @@ export default function SearchResultsTable() {
       aria-label="Search results"
     >
       <div className="mx-auto max-w-3xl rounded-md border border-border bg-background shadow-lg ring-1 ring-border/50">
-        <div className="max-h-[min(60vh,24rem)] overflow-y-auto">
+        <div
+          ref={listboxRef}
+          role="listbox"
+          id={resultsId}
+          aria-label="Search results"
+          className="max-h-[min(60vh,24rem)] overflow-y-auto"
+        >
           <table className="w-full text-left text-sm">
-            <thead className="sticky top-0 border-b border-border bg-muted/50 font-medium">
+            <thead className="sticky top-0 z-10 border-b border-border bg-muted font-medium shadow-sm">
               <tr>
                 <th scope="col" className="px-4 py-2 text-foreground">
                   Title
@@ -78,10 +115,10 @@ export default function SearchResultsTable() {
               </tr>
             </thead>
             <tbody>
-              {errorMessage ? (
+              {error ? (
                 <tr>
                   <td colSpan={2} className="px-4 py-6 text-center text-muted-foreground">
-                    {errorMessage}
+                    {error}
                   </td>
                 </tr>
               ) : loading ? (
@@ -97,10 +134,13 @@ export default function SearchResultsTable() {
                   </td>
                 </tr>
               ) : (
-                hits.map((hit) => (
+                hits.map((hit, i) => (
                   <tr
                     key={`${hit.site}-${hit.url}`}
-                    className="border-b border-border/50 hover:bg-muted/30"
+                    id={`${resultsId}-option-${i}`}
+                    role="option"
+                    aria-selected={i === activeIndex}
+                    className={`border-b border-border/50 hover:bg-muted/30 ${i === activeIndex ? "bg-muted/50" : ""}`}
                   >
                     <td className="px-4 py-2">
                       <a
