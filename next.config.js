@@ -13,6 +13,10 @@ const nextConfig = {
    
     // Optional: Change the output directory `out` -> `dist`
     // distDir: 'dist',
+
+    experimental: {
+      instrumentationHook: true,
+    },
   }
    
   module.exports = nextConfig

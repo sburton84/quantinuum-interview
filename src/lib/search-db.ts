@@ -1,5 +1,8 @@
 import Database from "better-sqlite3";
 import path from "path";
+import { logs } from '@opentelemetry/api-logs';
+
+const logger = logs.getLogger('search-db');
 
 /**
  * Search result shape (matches existing SearchResultHit).
@@ -39,8 +42,18 @@ export function searchAllIndicesFromDb(
   query: string,
   dbPath: string = DEFAULT_DB_PATH
 ): SearchResultHit[] {
+  logger.emit({
+    severityText: 'INFO',
+    body: 'Searching database',
+    attributes: {
+      query: query,
+    },
+  });
+
   const q = query.trim();
-  if (!q) return [];
+  if (!q) {
+    return [];
+  }
 
   const connection = getDb(dbPath);
   if (!connection) return [];
@@ -124,9 +137,25 @@ export function searchAllIndicesFromDb(
       results.push({ title: row.title, url, site: row.site_name, context: row.context, rank: row.rank });
     }
 
+    logger.emit({
+      severityText: 'INFO',
+      body: 'Results found',
+      attributes: {
+        query: query,
+        resultCount: results.length,
+      },
+    });
+
     return results;
   } catch (e) {
-    console.error("Error searching database:", e);
+    logger.emit({
+      severityText: 'ERROR',
+      body: 'Error searching database',
+      attributes: {
+        error: e,
+      },
+    });
+
     return [];
   }
 }
